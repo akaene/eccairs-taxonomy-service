@@ -82,7 +82,9 @@ public class EccairsTaxonomyService {
         if (taxonomyVersion != null) {
             return;
         }
+        LOG.debug("Initializing ECCAIRS taxonomy service.");
         this.taxonomyVersion = loadTaxonomyVersionId();
+        LOG.debug("Current taxonomy: {} (internal ECCAIRS ID: {})", taxonomyVersion.label(), taxonomyVersion.id());
         this.taxonomyTree = loadTaxonomyTree();
     }
 
@@ -141,6 +143,7 @@ public class EccairsTaxonomyService {
      * @return {@code true} if the value list is hierarchical, {@code false} otherwise
      */
     public boolean hasHierarchicalValueList(int attributeId) {
+        LOG.trace("Checking hierarchy of value list of attribute {}.", attributeId);
         initializeIfNecessary();
         final int internalAttId = resolveInternalEccairsId(attributeId);
         final TaxonomyServiceResponse attribute = getResponse(taxonomyServiceUrl + "/attributes/public/byID/" + internalAttId + "?taxonomyId=" + taxonomyVersion.id());
@@ -163,9 +166,9 @@ public class EccairsTaxonomyService {
         if (attIds.isEmpty()) {
             throw new IllegalArgumentException("Attribute with ECCAIRS ID '" + attIds + "' not found in the taxonomy tree!");
         }
-        assert attIds.size() == 1;
         final Integer attId = attIds.get(0);
         attributeIdMap.put(attributeId, attId);
+        LOG.trace("Internal ECCAIRS ID of attribute {} is {}.", attributeId, attId);
         return attId;
     }
 
@@ -215,6 +218,13 @@ public class EccairsTaxonomyService {
             }
         });
         return result;
+    }
+
+    /**
+     * Shuts this service down.
+     */
+    public void close() {
+        httpClient.close();
     }
 
     private static void configureJsonPath() {
