@@ -220,13 +220,6 @@ public class EccairsTaxonomyService {
         return result;
     }
 
-    /**
-     * Shuts this service down.
-     */
-    public void close() {
-        httpClient.close();
-    }
-
     private static void configureJsonPath() {
         Configuration.setDefaults(new Configuration.Defaults() {
 
