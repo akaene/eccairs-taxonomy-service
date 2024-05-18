@@ -220,6 +220,17 @@ public class EccairsTaxonomyService {
         return result;
     }
 
+    /**
+     * Resets this service, forcing it to load the taxonomy version and tree on the next taxonomy access call.
+     * <p>
+     * This can be used to ensure the latest taxonomy is used by long-running applications.
+     */
+    public void reset() {
+        LOG.debug("Resetting taxonomy service");
+        this.taxonomyTree = null;
+        this.taxonomyVersion = null;
+    }
+
     private static void configureJsonPath() {
         Configuration.setDefaults(new Configuration.Defaults() {
 
