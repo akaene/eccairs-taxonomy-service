@@ -70,6 +70,9 @@ public class EccairsTaxonomyService {
      * Gets the string representing the current ECCAIRS taxonomy version.
      * <p>
      * For example, {@literal 5.1.1.2}.
+     * <p>
+     * The label is cached for better performance, so it may theoretically become stale. For the current taxonomy
+     * version, use {@link #loadTaxonomyVersionInfo()}.
      *
      * @return Current ECCAIRS taxonomy version label
      */
@@ -83,12 +86,17 @@ public class EccairsTaxonomyService {
             return;
         }
         LOG.debug("Initializing ECCAIRS taxonomy service.");
-        this.taxonomyVersion = loadTaxonomyVersionId();
+        this.taxonomyVersion = loadTaxonomyVersionInfo();
         LOG.debug("Current taxonomy: {} (internal ECCAIRS ID: {})", taxonomyVersion.label(), taxonomyVersion.id());
         this.taxonomyTree = loadTaxonomyTree();
     }
 
-    private TaxonomyVersionInfo loadTaxonomyVersionId() {
+    /**
+     * Loads the current taxonomy version information from the Taxonomy Browser API.
+     *
+     * @return Current taxonomy version information
+     */
+    public TaxonomyVersionInfo loadTaxonomyVersionInfo() {
         final TaxonomyServiceResponse versionInfo = getResponse(taxonomyServiceUrl + "/version/public/");
         assert versionInfo != null;
         final DocumentContext node = JsonPath.parse(versionInfo.getData().toString());
@@ -118,7 +126,8 @@ public class EccairsTaxonomyService {
     private TaxonomyServiceResponse attemptRequest(HttpRequest request,
                                                    int attempt) throws InterruptedException {
         try {
-            final HttpResponse<String> resp = httpClient.send(request, HttpResponse.BodyHandlers.ofString(StandardCharsets.UTF_8));
+            final HttpResponse<String> resp = httpClient.send(request, HttpResponse.BodyHandlers.ofString(
+                    StandardCharsets.UTF_8));
             if (resp.statusCode() != 200) {
                 LOG.error("Failed to get response. Received {}.", resp);
                 throw new TaxonomyServiceException("Unable to retrieve response. Got status " + resp.statusCode());
@@ -146,7 +155,8 @@ public class EccairsTaxonomyService {
         LOG.trace("Checking hierarchy of value list of attribute {}.", attributeId);
         initializeIfNecessary();
         final int internalAttId = resolveInternalEccairsId(attributeId);
-        final TaxonomyServiceResponse attribute = getResponse(taxonomyServiceUrl + "/attributes/public/byID/" + internalAttId + "?taxonomyId=" + taxonomyVersion.id());
+        final TaxonomyServiceResponse attribute = getResponse(
+                taxonomyServiceUrl + "/attributes/public/byID/" + internalAttId + "?taxonomyId=" + taxonomyVersion.id());
         assert attribute != null;
         try {
             return JsonPath.parse(attribute.getData().toString())
@@ -162,9 +172,12 @@ public class EccairsTaxonomyService {
         if (attributeIdMap.containsKey(attributeId)) {
             return attributeIdMap.get(attributeId);
         }
-        final List<Integer> attIds = taxonomyTree.read("$..[?(@.tc==" + attributeId + " && @.type==\"A\")].id", new TypeRef<>() {});
+        final List<Integer> attIds = taxonomyTree.read("$..[?(@.tc==" + attributeId + " && @.type==\"A\")].id",
+                                                       new TypeRef<>() {
+                                                       });
         if (attIds.isEmpty()) {
-            throw new IllegalArgumentException("Attribute with ECCAIRS ID '" + attIds + "' not found in the taxonomy tree!");
+            throw new IllegalArgumentException(
+                    "Attribute with ECCAIRS ID '" + attIds + "' not found in the taxonomy tree!");
         }
         final Integer attId = attIds.get(0);
         attributeIdMap.put(attributeId, attId);
@@ -185,7 +198,8 @@ public class EccairsTaxonomyService {
         initializeIfNecessary();
         final List<EccairsValue> result = new ArrayList<>();
         final int attId = resolveInternalEccairsId(attributeId);
-        final TaxonomyServiceResponse topLevel = getResponse(taxonomyServiceUrl + "/attributes/public/showFirstLevelValues?attributesList=" + attId);
+        final TaxonomyServiceResponse topLevel = getResponse(
+                taxonomyServiceUrl + "/attributes/public/showFirstLevelValues?attributesList=" + attId);
         topLevel.getData().get("map").get(Integer.toString(attId)).forEach(v -> {
             final EccairsValue ev = initEccairsValue(v);
             result.add(ev);
@@ -209,7 +223,8 @@ public class EccairsTaxonomyService {
     private List<EccairsValue> getValueDescendants(int attributeId, int valId, int level) {
         LOG.trace("Loading value list of attribute {}, level {}.", attributeId, level);
         final List<EccairsValue> result = new ArrayList<>();
-        final TaxonomyServiceResponse children = getResponse(taxonomyServiceUrl + "/listofvalue/public/childrenLov/" + valId);
+        final TaxonomyServiceResponse children = getResponse(
+                taxonomyServiceUrl + "/listofvalue/public/childrenLov/" + valId);
         children.getData().get("list").forEach(v -> {
             final EccairsValue ev = initEccairsValue(v);
             result.add(ev);
@@ -253,6 +268,4 @@ public class EccairsTaxonomyService {
             }
         });
     }
-
-    private record TaxonomyVersionInfo(String label, int id) {}
 }
