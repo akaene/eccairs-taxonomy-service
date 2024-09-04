@@ -81,6 +81,18 @@ public class EccairsTaxonomyService {
         return taxonomyVersion.label();
     }
 
+    /**
+     * Gets the internal ECCAIRS identifier of the current ECCAIRS taxonomy version.
+     * <p>
+     * For example, the current ECCAIRS taxonomy version {@literal 5.1.1.2} has id {@literal 218}.
+     *
+     * @return Taxonomy version identifier
+     */
+    public int getTaxonomyVersionId() {
+        initializeIfNecessary();
+        return taxonomyVersion.id();
+    }
+
     private void initializeIfNecessary() {
         if (taxonomyVersion != null) {
             return;
