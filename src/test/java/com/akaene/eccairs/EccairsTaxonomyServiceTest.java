@@ -7,6 +7,7 @@ import java.util.List;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.matchesPattern;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -38,5 +39,13 @@ class EccairsTaxonomyServiceTest {
         final List<EccairsValue> result = sut.getValueList(431);
         assertTrue(result.stream().anyMatch(ev -> "Accident".equals(ev.getDescription())));
         assertTrue(result.stream().anyMatch(ev -> "Occurrence with No Flight Intended".equals(ev.getDescription())));
+    }
+
+    @Test
+    void getParentEntityRetrieveParentEntityFromEccairsTaxonomyService() {
+        final EccairsEntity result = sut.getParentEntity(431);
+        assertNotNull(result);
+        assertEquals(24, result.taxonomyCode());
+        assertEquals("Occurrence", result.label());
     }
 }

@@ -236,6 +236,44 @@ public class EccairsTaxonomyService {
     }
 
     /**
+     * Resolves the parent entity of the specified attribute.
+     *
+     * @param attributeId ECCAIRS attribute id, e.g., for attribute A-431 it would be 431
+     * @return {@code EccairsEntity}
+     */
+    public EccairsEntity getParentEntity(int attributeId) {
+        LOG.trace("Loading parent entity of attribute {}.", attributeId);
+        initializeIfNecessary();
+        final int attId = resolveInternalEccairsId(attributeId);
+        final int taxonomyVersionId = taxonomyVersion.id();
+        final String payload = JsonPath.parse(Map.of(
+                "attributeIdentifiers", List.of(attId),
+                "taxonomyId", taxonomyVersionId
+        )).jsonString();
+        final TaxonomyServiceResponse response = postRequest(taxonomyServiceUrl + "/attributes/public/byIDs", payload);
+        assert response.getData().isArray();
+        final JsonNode parentEntity = response.getData().get(0).get("parentEntity");
+        return new EccairsEntity(
+                parentEntity.get("id").asInt(),
+                parentEntity.get("taxonomyCode").asInt(),
+                parentEntity.get("description").asText()
+        );
+    }
+
+    private TaxonomyServiceResponse postRequest(String uri, String jsonPayload) {
+        try {
+            final HttpRequest request = HttpRequest.newBuilder().uri(URI.create(uri))
+                                                   .header("Content-Type", "application/json")
+                                                   .POST(HttpRequest.BodyPublishers.ofString(jsonPayload)).build();
+            return attemptRequest(request, 0);
+        } catch (RuntimeException e) {
+            throw e;
+        } catch (Exception e) {
+            throw new TaxonomyServiceException("Unable to perform request.", e);
+        }
+    }
+
+    /**
      * Resets this service, forcing it to load the taxonomy version and tree on the next taxonomy access call.
      * <p>
      * This can be used to ensure the latest taxonomy is used by long-running applications.
