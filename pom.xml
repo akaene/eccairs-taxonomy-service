@@ -3,7 +3,7 @@
 
     <groupId>com.akaene</groupId>
     <artifactId>eccairs-taxonomy-service</artifactId>
-    <version>0.0.6</version>
+    <version>0.0.7</version>
     <name>ECCAIRS2 Taxonomy Service</name>
     <description>Provides access to the ECCAIRS2 taxonomy values</description>
     <packaging>jar</packaging>
