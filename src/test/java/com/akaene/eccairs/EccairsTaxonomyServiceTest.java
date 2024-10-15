@@ -48,4 +48,20 @@ class EccairsTaxonomyServiceTest {
         assertEquals(24, result.taxonomyCode());
         assertEquals("Occurrence", result.label());
     }
+
+    @Test
+    void getsEntityByTaxonomyCode() {
+        final EccairsEntity result = sut.getEntity(24);
+        assertNotNull(result);
+        assertEquals(24, result.taxonomyCode());
+        assertEquals("Occurrence", result.label());
+    }
+
+    @Test
+    void getsEccairsAttributeByTaxonomyCode() {
+        final EccairsAttribute result = sut.getAttribute(390);
+        assertNotNull(result);
+        assertEquals(390, result.taxonomyCode());
+        assertEquals("Event type", result.label());
+    }
 }

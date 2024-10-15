@@ -247,6 +247,26 @@ public class EccairsTaxonomyService {
         return result;
     }
 
+    public EccairsEntity getEntity(int entityId) {
+        initializeIfNecessary();
+        List<Map<String, Object>> nodes = taxonomyTree.read("$..[?(@.tc==" + entityId + " && @.type==\"E\")]");
+        if (nodes.isEmpty()) {
+            throw new TaxonomyServiceException("Entity with id " + entityId + " not found in the taxonomy tree!");
+        }
+        Map<String, Object> node = nodes.get(0);
+        return new EccairsEntity((int) node.get("id"), entityId, node.get("name").toString());
+    }
+
+    public EccairsAttribute getAttribute(int attributeId) {
+        initializeIfNecessary();
+        List<Map<String, Object>> nodes = taxonomyTree.read("$..[?(@.tc==" + attributeId + " && @.type==\"A\")]");
+        if (nodes.isEmpty()) {
+            throw new TaxonomyServiceException("Attribute with id " + attributeId + " not found in the taxonomy tree!");
+        }
+        Map<String, Object> node = nodes.get(0);
+        return new EccairsAttribute((int) node.get("id"), attributeId, node.get("name").toString());
+    }
+
     /**
      * Resolves the parent entity of the specified attribute.
      *
