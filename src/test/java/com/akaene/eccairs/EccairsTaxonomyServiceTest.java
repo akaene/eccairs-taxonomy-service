@@ -55,6 +55,7 @@ class EccairsTaxonomyServiceTest {
         assertNotNull(result);
         assertEquals(24, result.taxonomyCode());
         assertEquals("Occurrence", result.label());
+        assertEquals("Occurrence", result.xsdTag());
     }
 
     @Test
@@ -63,5 +64,6 @@ class EccairsTaxonomyServiceTest {
         assertNotNull(result);
         assertEquals(390, result.taxonomyCode());
         assertEquals("Event type", result.label());
+        assertEquals("Event_Type", result.xsdTag());
     }
 }

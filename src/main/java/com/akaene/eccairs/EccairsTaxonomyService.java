@@ -254,7 +254,7 @@ public class EccairsTaxonomyService {
             throw new TaxonomyServiceException("Entity with id " + entityId + " not found in the taxonomy tree!");
         }
         Map<String, Object> node = nodes.get(0);
-        return new EccairsEntity((int) node.get("id"), entityId, node.get("name").toString());
+        return new EccairsEntity((int) node.get("id"), entityId, node.get("name").toString(), node.get("xsd").toString());
     }
 
     public EccairsAttribute getAttribute(int attributeId) {
@@ -264,7 +264,7 @@ public class EccairsTaxonomyService {
             throw new TaxonomyServiceException("Attribute with id " + attributeId + " not found in the taxonomy tree!");
         }
         Map<String, Object> node = nodes.get(0);
-        return new EccairsAttribute((int) node.get("id"), attributeId, node.get("name").toString());
+        return new EccairsAttribute((int) node.get("id"), attributeId, node.get("name").toString(), node.get("xsd").toString());
     }
 
     /**
@@ -285,11 +285,8 @@ public class EccairsTaxonomyService {
         final TaxonomyServiceResponse response = postRequest(taxonomyServiceUrl + "/attributes/public/byIDs", payload);
         assert response.getData().isArray();
         final JsonNode parentEntity = response.getData().get(0).get("parentEntity");
-        return new EccairsEntity(
-                parentEntity.get("id").asInt(),
-                parentEntity.get("taxonomyCode").asInt(),
-                parentEntity.get("description").asText()
-        );
+        final int parentId = parentEntity.get("taxonomyCode").asInt();
+        return getEntity(parentId);
     }
 
     private TaxonomyServiceResponse postRequest(String uri, String jsonPayload) {
