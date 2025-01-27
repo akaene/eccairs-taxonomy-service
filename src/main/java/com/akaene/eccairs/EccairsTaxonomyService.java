@@ -109,7 +109,7 @@ public class EccairsTaxonomyService {
      * @return Current taxonomy version information
      */
     public TaxonomyVersionInfo loadTaxonomyVersionInfo() {
-        final TaxonomyServiceResponse versionInfo = getResponse(taxonomyServiceUrl + "/version/public/");
+        final TaxonomyServiceResponse versionInfo = getResponse(taxonomyServiceUrl + "/version/public");
         assert versionInfo != null;
         final DocumentContext node = JsonPath.parse(versionInfo.getData().toString());
         final int versionId = node.read("$.id", Integer.class);
@@ -118,7 +118,7 @@ public class EccairsTaxonomyService {
     }
 
     private DocumentContext loadTaxonomyTree() {
-        final TaxonomyServiceResponse tree = getResponse(taxonomyServiceUrl + "/tree/public/");
+        final TaxonomyServiceResponse tree = getResponse(taxonomyServiceUrl + "/tree/public");
         assert tree != null;
         return JsonPath.parse(tree.getData().toString());
     }
