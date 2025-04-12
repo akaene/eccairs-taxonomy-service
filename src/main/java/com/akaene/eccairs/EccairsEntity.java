@@ -1,5 +1,7 @@
 package com.akaene.eccairs;
 
+import java.util.Optional;
+
 /**
  * ECCAIRS entity representation.
  *
@@ -8,5 +10,5 @@ package com.akaene.eccairs;
  * @param label        Label of the entity
  * @param xsdTag       XSD tag, can be used to generated E5X
  */
-public record EccairsEntity(int id, int taxonomyCode, String label, String xsdTag) {
+public record EccairsEntity(int id, int taxonomyCode, String label, String xsdTag, Optional<Integer> parentId) {
 }

@@ -4,6 +4,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.util.List;
+import java.util.Optional;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.matchesPattern;
@@ -56,6 +57,16 @@ class EccairsTaxonomyServiceTest {
         assertEquals(24, result.taxonomyCode());
         assertEquals("Occurrence", result.label());
         assertEquals("Occurrence", result.xsdTag());
+    }
+
+    @Test
+    void getsEntityWithParent() {
+        final EccairsEntity result = sut.getEntity(31);
+        assertNotNull(result);
+        assertEquals(31, result.taxonomyCode());
+        assertEquals("Runway", result.label());
+        assertEquals("Runway", result.xsdTag());
+        assertEquals(Optional.of(1), result.parentId());
     }
 
     @Test

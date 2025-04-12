@@ -28,6 +28,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.Set;
 
 /**
@@ -44,6 +45,8 @@ public class EccairsTaxonomyService {
     private TaxonomyVersionInfo taxonomyVersion;
 
     private DocumentContext taxonomyTree;
+
+    private List<Map<String, Object>> entityCache;
 
     private final ObjectMapper objectMapper;
 
@@ -101,6 +104,7 @@ public class EccairsTaxonomyService {
         this.taxonomyVersion = loadTaxonomyVersionInfo();
         LOG.debug("Current taxonomy: {} (internal ECCAIRS ID: {})", taxonomyVersion.label(), taxonomyVersion.id());
         this.taxonomyTree = loadTaxonomyTree();
+        this.entityCache = new ArrayList<>(taxonomyTree.read("$..[?(@.type==\"E\")]"));
     }
 
     /**
@@ -249,12 +253,15 @@ public class EccairsTaxonomyService {
 
     public EccairsEntity getEntity(int entityId) {
         initializeIfNecessary();
-        List<Map<String, Object>> nodes = taxonomyTree.read("$..[?(@.tc==" + entityId + " && @.type==\"E\")]");
-        if (nodes.isEmpty()) {
-            throw new TaxonomyServiceException("Entity with id " + entityId + " not found in the taxonomy tree!");
-        }
-        Map<String, Object> node = nodes.get(0);
-        return new EccairsEntity((int) node.get("id"), entityId, node.get("name").toString(), node.get("xsd").toString());
+        Map<String, Object> node = entityCache.stream().filter(m -> Objects.equals(m.get("tc"), entityId)).findFirst()
+                                              .orElseThrow(() -> new TaxonomyServiceException(
+                                                      "Entity with id " + entityId + " not found in the taxonomy tree!"));
+        final Optional<Integer> parent = entityCache.stream().filter(p -> p.containsKey("children")).filter(p -> {
+            final List<Map<String, Object>> children = (List<Map<String, Object>>) p.get("children");
+            return children.stream().anyMatch(pp -> Objects.equals(pp.get("tc"), entityId));
+        }).map(p -> Integer.parseInt(p.get("tc").toString())).findFirst();
+        return new EccairsEntity((int) node.get("id"), entityId, node.get("name").toString(),
+                                 node.get("xsd").toString(), parent);
     }
 
     public EccairsAttribute getAttribute(int attributeId) {
@@ -264,7 +271,8 @@ public class EccairsTaxonomyService {
             throw new TaxonomyServiceException("Attribute with id " + attributeId + " not found in the taxonomy tree!");
         }
         Map<String, Object> node = nodes.get(0);
-        return new EccairsAttribute((int) node.get("id"), attributeId, node.get("name").toString(), node.get("xsd").toString());
+        return new EccairsAttribute((int) node.get("id"), attributeId, node.get("name").toString(),
+                                    node.get("xsd").toString());
     }
 
     /**
@@ -311,6 +319,7 @@ public class EccairsTaxonomyService {
         LOG.debug("Resetting taxonomy service");
         this.taxonomyTree = null;
         this.taxonomyVersion = null;
+        this.entityCache = null;
     }
 
     private static void configureJsonPath() {
