@@ -3,7 +3,7 @@
 
     <groupId>com.akaene</groupId>
     <artifactId>eccairs-taxonomy-service</artifactId>
-    <version>0.0.10</version>
+    <version>0.0.11</version>
     <name>ECCAIRS2 Taxonomy Service</name>
     <description>Provides access to the ECCAIRS2 taxonomy values</description>
     <packaging>jar</packaging>
@@ -24,13 +24,13 @@
         <dependency>
             <groupId>com.jayway.jsonpath</groupId>
             <artifactId>json-path</artifactId>
-            <version>2.9.0</version>
+            <version>2.10.0</version>
         </dependency>
 
         <dependency>
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-api</artifactId>
-            <version>2.0.13</version>
+            <version>2.0.17</version>
         </dependency>
 
         <!-- Test dependencies -->
@@ -49,7 +49,7 @@
         <dependency>
             <groupId>ch.qos.logback</groupId>
             <artifactId>logback-classic</artifactId>
-            <version>1.5.18</version>
+            <version>1.5.21</version>
             <scope>test</scope>
         </dependency>
     </dependencies>
