@@ -233,6 +233,9 @@ public class EccairsTaxonomyService {
         ev.setDetailedDescription(valueNode.get("detailed").asText());
         ev.setLevel(valueNode.get("level").asText());
         ev.setExplanation(valueNode.get("explanation").asText());
+        if (valueNode.has("active")) {
+            ev.setActive(valueNode.get("active").asBoolean(true));
+        }
         return ev;
     }
 

@@ -16,6 +16,8 @@ public class EccairsValue {
 
     private String level;
 
+    private boolean active;
+
     private List<EccairsValue> values;
 
     public int getId() {
@@ -64,6 +66,14 @@ public class EccairsValue {
 
     public void setLevel(String level) {
         this.level = level;
+    }
+
+    public boolean isActive() {
+        return active;
+    }
+
+    public void setActive(boolean active) {
+        this.active = active;
     }
 
     public List<EccairsValue> getValues() {
