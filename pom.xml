@@ -3,7 +3,7 @@
 
     <groupId>com.akaene</groupId>
     <artifactId>eccairs-taxonomy-service</artifactId>
-    <version>0.1.0</version>
+    <version>0.1.1</version>
     <name>ECCAIRS2 Taxonomy Service</name>
     <description>Provides access to the ECCAIRS2 taxonomy values</description>
     <packaging>jar</packaging>
@@ -19,7 +19,7 @@
         <dependency>
             <groupId>com.fasterxml.jackson.core</groupId>
             <artifactId>jackson-databind</artifactId>
-            <version>2.21.4</version>
+            <version>2.22.1</version>
         </dependency>
         <dependency>
             <groupId>com.jayway.jsonpath</groupId>
