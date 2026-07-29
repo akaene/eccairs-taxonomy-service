@@ -21,7 +21,9 @@ public class ValueListElement implements Serializable {
 
     private Integer parent;
 
-    public ValueListElement(Integer id, String label, String description) {
+    private Integer attributeId;
+
+    public ValueListElement(Integer id, String label, String description, Integer attributeId) {
         this.id = id;
         this.label = label;
         this.description = description;
@@ -67,17 +69,25 @@ public class ValueListElement implements Serializable {
         this.parent = parent;
     }
 
+    public Integer getAttributeId() {
+        return attributeId;
+    }
+
+    public void setAttributeId(Integer attributeId) {
+        this.attributeId = attributeId;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (!(o instanceof ValueListElement that)) {
             return false;
         }
-        return Objects.equals(id, that.id);
+        return Objects.equals(id, that.id) && Objects.equals(attributeId, that.attributeId);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hashCode(id);
+        return Objects.hash(id, attributeId);
     }
 
     @Override
@@ -85,6 +95,7 @@ public class ValueListElement implements Serializable {
         return "ValueListElement{" +
                 "id=" + id +
                 ", label='" + label + '\'' +
-                '}';
+                "(a-" + attributeId +
+                ")}";
     }
 }

@@ -40,20 +40,23 @@ public class ValueListService {
         LOG.trace("Getting value list for A-{}", attributeId);
         return taxonomyService.getValueList(attributeId).stream()
                               .filter(EccairsValue::isActive)
-                              .flatMap(this::mapEccairsValue)
+                              .flatMap(v -> mapEccairsValue(v, attributeId))
                               .toList();
     }
 
-    private Stream<ValueListElement> mapEccairsValue(EccairsValue ev) {
-        return recursivelyMapEccairsValue(ev, null);
+    private Stream<ValueListElement> mapEccairsValue(EccairsValue ev, Integer attributeId) {
+        return recursivelyMapEccairsValue(ev, null, attributeId);
     }
 
-    private Stream<ValueListElement> recursivelyMapEccairsValue(EccairsValue ev, Integer parentId) {
-        final ValueListElement to = new ValueListElement(ev.getId(), ev.getDescription(), ev.getDetailedDescription());
+    private Stream<ValueListElement> recursivelyMapEccairsValue(EccairsValue ev, Integer parentId,
+                                                                Integer attributeId) {
+        final ValueListElement to = new ValueListElement(ev.getId(), ev.getDescription(), ev.getDetailedDescription(),
+                                                         attributeId);
         final List<ValueListElement> descendants;
         to.setParent(parentId);
         if (ev.getValues() != null) {
-            descendants = ev.getValues().stream().flatMap(d -> recursivelyMapEccairsValue(d, ev.getId())).toList();
+            descendants = ev.getValues().stream().flatMap(d -> recursivelyMapEccairsValue(d, ev.getId(), attributeId))
+                            .toList();
             to.setDescendants(descendants.stream().map(ValueListElement::getId).toList());
         } else {
             descendants = List.of();
