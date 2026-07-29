@@ -27,6 +27,7 @@ public class ValueListElement implements Serializable {
         this.id = id;
         this.label = label;
         this.description = description;
+        this.attributeId = attributeId;
     }
 
     public Integer getId() {
