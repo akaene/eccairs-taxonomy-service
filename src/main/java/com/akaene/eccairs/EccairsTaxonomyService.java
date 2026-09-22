@@ -275,6 +275,8 @@ public class EccairsTaxonomyService {
         }
         Map<String, Object> node = nodes.get(0);
         return new EccairsAttribute((int) node.get("id"), attributeId, node.get("name").toString(),
+                                    AttributeType.fromEccairs(node.get("at").toString()),
+                                    AttributeDataType.fromEccairs(node.get("ad").toString()),
                                     node.get("xsd").toString());
     }
 

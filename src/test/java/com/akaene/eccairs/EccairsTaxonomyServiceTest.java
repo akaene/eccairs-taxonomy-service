@@ -76,5 +76,7 @@ class EccairsTaxonomyServiceTest {
         assertEquals(390, result.taxonomyCode());
         assertEquals("Event type", result.label());
         assertEquals("Event_Type", result.xsdTag());
+        assertEquals(AttributeType.SELECTION, result.type());
+        assertEquals(AttributeDataType.CODE, result.dataType());
     }
 }
