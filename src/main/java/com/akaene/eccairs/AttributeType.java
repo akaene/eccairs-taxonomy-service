@@ -1,5 +1,7 @@
 package com.akaene.eccairs;
 
+import java.util.Objects;
+
 /**
  * The type of {@link EccairsAttribute}.
  * <p>
@@ -14,6 +16,7 @@ public enum AttributeType {
     SELECTION;
 
     public static AttributeType fromEccairs(String value) {
+        Objects.requireNonNull(value);
         return switch (value) {
             case "ManualEntry" -> MANUAL_ENTRY;
             case "PredefinedValueList" -> SELECTION;

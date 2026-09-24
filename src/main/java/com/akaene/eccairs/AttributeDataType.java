@@ -1,5 +1,7 @@
 package com.akaene.eccairs;
 
+import java.util.Objects;
+
 /**
  * Data types of attribute values.
  * <p>
@@ -31,7 +33,9 @@ public enum AttributeDataType {
     TIME;
 
     public static AttributeDataType fromEccairs(String value) {
-        return switch (value) {
+        Objects.requireNonNull(value);
+        String normalized = value.strip().replaceAll("\\s+", " ");
+        return switch (normalized) {
             case "Alphanumeric" -> ALPHANUMERIC;
             case "Code" -> CODE;
             case "Code and Additional Text" -> CODE_AND_TEXT;
