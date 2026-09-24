@@ -29,6 +29,7 @@ public enum AttributeDataType {
     ECCAIRS_RESOURCE_LOCATOR,
     LATITUDE,
     LONGITUDE,
+    NUMBER,
     TEXT,
     TIME;
 
@@ -46,6 +47,7 @@ public enum AttributeDataType {
             case "Eccairs Resource Locator" -> ECCAIRS_RESOURCE_LOCATOR;
             case "Latitude" -> LATITUDE;
             case "Longitude" -> LONGITUDE;
+            case "Number" -> NUMBER;
             case "Text" -> TEXT;
             case "Time" -> TIME;
             default -> throw new IllegalArgumentException("Unsupported data type " + value);
