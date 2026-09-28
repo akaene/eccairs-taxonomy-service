@@ -57,16 +57,18 @@ public class ValueListService {
         return recursivelyMapEccairsValue(ev, null, attributeId);
     }
 
-    private Stream<ValueListElement> recursivelyMapEccairsValue(EccairsValue ev, Integer parentId,
+    private Stream<ValueListElement> recursivelyMapEccairsValue(EccairsValue ev, ValueListElement parent,
                                                                 Integer attributeId) {
         final ValueListElement to = new ValueListElement(ev.getId(), ev.getDescription(), ev.getDetailedDescription(),
                                                          attributeId);
         final List<ValueListElement> descendants;
-        to.setParent(parentId);
+        if (parent != null) {
+            to.setParent(parent.getId());
+            parent.addChild(to.getId());
+        }
         if (ev.getValues() != null) {
-            descendants = ev.getValues().stream().flatMap(d -> recursivelyMapEccairsValue(d, ev.getId(), attributeId))
+            descendants = ev.getValues().stream().flatMap(d -> recursivelyMapEccairsValue(d, to, attributeId))
                             .toList();
-            to.setDescendants(descendants.stream().map(ValueListElement::getId).toList());
         } else {
             descendants = List.of();
         }
@@ -82,7 +84,8 @@ public class ValueListService {
      * @param valueId     Value identifier
      * @return Matching value list element
      */
-    @Cacheable(value = "taxonomyValues", key = "new com.akaene.eccairs.cache.TaxonomyValueCacheKey(#attributeId, #valueId)")
+    @Cacheable(value = "taxonomyValues",
+               key = "new com.akaene.eccairs.cache.TaxonomyValueCacheKey(#attributeId, #valueId)")
     public ValueListElement getValue(@NonNull Integer attributeId, @NonNull Integer valueId) {
         return self.getValueList(attributeId).stream()
                    .filter(v -> v.getId().equals(valueId))

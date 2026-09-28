@@ -1,6 +1,7 @@
 package com.akaene.eccairs.values;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
@@ -17,7 +18,7 @@ public class ValueListElement implements Serializable {
 
     private String description;
 
-    private List<Integer> descendants;
+    private List<Integer> children;
 
     private Integer parent;
 
@@ -54,12 +55,19 @@ public class ValueListElement implements Serializable {
         this.description = description;
     }
 
-    public List<Integer> getDescendants() {
-        return descendants;
+    public List<Integer> getChildren() {
+        return children;
     }
 
-    public void setDescendants(List<Integer> descendants) {
-        this.descendants = descendants;
+    public void setChildren(List<Integer> children) {
+        this.children = children;
+    }
+
+    public void addChild(Integer childId) {
+        if (this.children == null) {
+            this.children = new ArrayList<>();
+        }
+        children.add(childId);
     }
 
     public Integer getParent() {
