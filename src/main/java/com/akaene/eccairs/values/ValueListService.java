@@ -13,6 +13,7 @@ import org.springframework.lang.NonNull;
 
 import java.util.List;
 import java.util.Objects;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 /**
@@ -50,7 +51,7 @@ public class ValueListService {
         return taxonomyService.getValueList(attributeId).stream()
                               .filter(EccairsValue::isActive)
                               .flatMap(v -> mapEccairsValue(v, attributeId))
-                              .toList();
+                              .collect(Collectors.toList());
     }
 
     private Stream<ValueListElement> mapEccairsValue(EccairsValue ev, Integer attributeId) {
