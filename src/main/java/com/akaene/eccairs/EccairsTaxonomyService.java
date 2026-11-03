@@ -96,7 +96,7 @@ public class EccairsTaxonomyService {
         return taxonomyVersion.id();
     }
 
-    private void initializeIfNecessary() {
+    private synchronized void initializeIfNecessary() {
         if (taxonomyVersion != null) {
             return;
         }
